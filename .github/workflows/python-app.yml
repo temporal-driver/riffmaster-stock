@@ -25,13 +25,10 @@ jobs:
     - name: Install bs4
       run: |
         pip install beautifulsoup4
-      env:
-        APP_TOKEN: ${{ secrets.APP_TOKEN }}
-        USER_TOKEN: ${{ secrets.USER_TOKEN }}
         
     - name: Check Stock
       run: |
-        python -c "import requests, http.client, urllib
+        python -c "import requests, http.client, urllib, os
         from bs4 import BeautifulSoup
 
         url = 'https://pdp.com/products/xbox-series-x-s-xbox-one-pc-riffmaster-wireless-guitar-controller'
@@ -48,11 +45,14 @@ jobs:
                 '/1/messages.json',
                 urllib.parse.urlencode(
                     {
-                        'token': os.environ['APP_TOKEN'],
-                        'user': os.environ['USER_TOKEN'],
+                        'token': os.environ.get('APP_TOKEN'),
+                        'user': os.environ.get('USER_TOKEN'),
                         'message': 'THE GUITAR IS IN STOCK! https://pdp.com/products/xbox-series-x-s-xbox-one-pc-riffmaster-wireless-guitar-controller',
                     }
                 ),
                 {'Content-type': 'application/x-www-form-urlencoded'},
             )
             conn.getresponse()"
+      env:
+        APP_TOKEN: ${{ secrets.APP_TOKEN }}
+        USER_TOKEN: ${{ secrets.USER_TOKEN }}
